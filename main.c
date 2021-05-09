@@ -188,11 +188,11 @@ void handle_client(SOCKET client) {
             buffer_free(&packet);
 
             puts("Sent pong response");
-            continue;
+            goto cleanup;
         }
 
         if (state == PROTO_STATE_LOGIN && packet_id == 0x00) {
-            char username[260] = {0};
+            char username[260] = { 0 };
             TRY(buffer_read_str(&inbound_packet, username, sizeof(username)));
             printf("Requested login as '%s'\n", username);
 
@@ -205,7 +205,7 @@ void handle_client(SOCKET client) {
             buffer_free(&packet);
 
             puts("Sent login response");
-            continue;
+            goto cleanup;
         }
 
         puts("Unsupported packet");
