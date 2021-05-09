@@ -16,6 +16,10 @@ static int buffer_dynamic_write(struct buffer*, const void*, size_t);
 static void buffer_dynamic_free(struct buffer*);
 
 int buffer_dynamic_init(struct buffer* buf, size_t cap) {
+    if (cap < 16) {
+        cap = 16;
+    }
+
     struct buf_dynamic_data* data = calloc(1, sizeof(struct buf_dynamic_data));
     data->set = data->cur = malloc(cap);
     data->end = data->set + cap;
