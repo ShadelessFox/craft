@@ -55,17 +55,21 @@ int buffer_dynamic_read(struct buffer* buf, void* ptr, size_t len) {
 
 int buffer_dynamic_write(struct buffer* buf, const void* ptr, size_t len) {
     struct buf_dynamic_data* data = (struct buf_dynamic_data*)buf->data;
+
     if (data->end - data->cur <= len) {
-        size_t cap = (data->end - data->cur);
-        size_t cur = (data->cur - data->set);
-        while (cap < len) {
-            cap <<= 1;
+        size_t old_cap = (data->end - data->set);
+        size_t old_cur = (data->cur - data->set);
+        size_t new_cap = old_cap;
+
+        while (new_cap < old_cap + len) {
+            new_cap <<= 1;
         }
 
-        data->set = realloc(data->set, cap);
-        data->cur = data->set + cur;
-        data->end = data->set + cap;
+        data->set = realloc(data->set, new_cap);
+        data->cur = data->set + old_cur;
+        data->end = data->set + new_cap;
     }
+
     memcpy(data->cur, ptr, len);
     data->cur += len;
     return 1;
